@@ -22,14 +22,20 @@ template <typename rosmsg_type>
 class Publisher
 {
 public:
-	Publisher(const char* tuple_key)
+	Publisher(const char* tuple_key, int ownerId)
 	{
 		_tuple_key = tuple_key;
+		_owner_id = ownerId;
 	}
 
 	void setTupleKey(std::string tuple_key)
 	{
 		_tuple_key = tuple_key;
+	}
+
+	void setOwnerID(int ownerId)
+	{
+		_owner_id = ownerId;
 	}
 
 	void publish(rosmsg_type msg)
@@ -42,7 +48,7 @@ public:
 		ros::serialization::OStream p_stream (buffer.get(), serial_size);
 		ros::serialization::serialize(p_stream, msg);
 
-		peiskmt_setTuple(
+		peiskmt_setRemoteTuple(_owner_id,
 						_tuple_key.c_str(),
 						serial_size,
 						buffer.get(),
@@ -54,6 +60,7 @@ public:
 
 private:
 	std::string _tuple_key;
+	int _owner_id;
 };
 
 }
